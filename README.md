@@ -58,4 +58,7 @@ The order in the file doesn't matter, because the site sorts by `date`. Records 
 
 ## Status
 
-V1: public browsing only. No upload UI, login, comments or likes.
+🚧 Work in progress — the layout and viewer are done, shown with placeholder samples for now.
+
+- **Now:** public browsing only. Content is edited in `data/works.js`; there is no upload UI, login, comments or likes.
+- **Next:** replace the samples with real works, decide where photos and videos are hosted, then deploy.
