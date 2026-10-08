@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>JH Gallery</title>
+  <meta name="description" content="JH Gallery — life in motion, moments in light.">
+  <meta name="theme-color" content="#15110e">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@400;500&display=swap">
+  <link rel="stylesheet" href="styles.css?v=13">
+</head>
+<body>
+
+  <header class="masthead" id="masthead">
+    <div class="frame masthead-inner">
+      <a href="#top" class="wordmark">JH Gallery</a>
+      <nav class="year-nav" id="year-nav" aria-label="Years"></nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ Opening: featured work + short intro (filled by script.js) ============ -->
+    <section class="opening" id="opening" aria-label="Opening"></section>
+
+    <!-- ============ Timeline by year (filled by script.js) ============ -->
+    <div class="timeline" id="timeline"></div>
+
+  </main>
+
+  <footer class="site-footer frame">
+    <p>© <span id="year"></span> JH Gallery</p>
+    <a href="#top">Back to top</a>
+  </footer>
+
+  <!-- ============ Viewer ============ -->
+  <dialog class="viewer" id="viewer" aria-labelledby="viewer-title">
+    <div class="viewer-stage">
+      <div class="viewer-frames" id="viewer-frames"></div>
+      <button class="viewer-nav viewer-prev" id="viewer-prev" aria-label="Previous">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <button class="viewer-nav viewer-next" id="viewer-next" aria-label="Next">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <div class="viewer-bar" id="viewer-bar">
+      <div class="viewer-caption">
+        <p class="viewer-meta" id="viewer-meta"></p>
+        <h2 class="viewer-title" id="viewer-title"></h2>
+        <p class="viewer-desc" id="viewer-desc"></p>
+      </div>
+      <div class="viewer-side">
+        <div class="viewer-thumbs" id="viewer-thumbs" role="list"></div>
+        <p class="viewer-count" id="viewer-count" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <button class="viewer-close" id="viewer-close" aria-label="Close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </dialog>
+
+  <script src="data/works.js?v=13"></script>
+  <script src="script.js?v=13"></script>
+</body>
+</html>
