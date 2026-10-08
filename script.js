@@ -72,26 +72,36 @@
   // ---------- Opening: featured work, then the site name as a wall label ----------
 
   const featured = works.find((w) => w.featured) || works[0];
+  const allYears = [...new Set(works.map((w) => parseDate(w.date).year).filter(Boolean))].sort();
+  const span = allYears.length
+    ? (allYears[0] === allYears.at(-1) ? `${allYears[0]}` : `${allYears[0]} — ${allYears.at(-1)}`)
+    : "";
   const opening = $("opening");
   opening.innerHTML = `
-    ${featured ? `
-      <div class="opening-media">
-        <a href="#/${encodeURIComponent(featured.id)}" aria-label="Open ${escapeHtml(featured.title)}">
-          <img src="${escapeHtml(coverOf(featured))}" alt="" fetchpriority="high">
-        </a>
-      </div>` : ""}
-    <div class="frame opening-text">
+    <div class="frame entrance">
       <div>
+        <p class="note kicker">The collection${span ? ` · ${span}` : ""}</p>
         <h1 class="site-title">${escapeHtml(data.siteTitle || "JH Gallery")}</h1>
         ${data.tagline ? `<p class="tagline">${escapeHtml(data.tagline)}</p>` : ""}
       </div>
-      ${featured ? `
-        <a class="opening-label" href="#/${encodeURIComponent(featured.id)}">
-          <span class="note">${featured.sample ? '<span style="color:var(--red-ink)">Sample</span> · ' : ""}${metaLine(featured)}</span>
-          <span class="work-title">${escapeHtml(featured.title)}</span>
+      <dl class="entrance-facts">
+        <div><dt class="note">Works</dt><dd>${works.length}</dd></div>
+        <div><dt class="note">Rooms</dt><dd>${new Set(works.map((w) => parseDate(w.date).year || "Undated")).size}</dd></div>
+      </dl>
+    </div>
+    ${featured ? `
+      <div class="frame featured">
+        <a class="hang featured-hang" href="#/${encodeURIComponent(featured.id)}" aria-label="Open ${escapeHtml(featured.title)}">
+          <span class="mount"><img src="${escapeHtml(coverOf(featured))}" alt="" fetchpriority="high"></span>
+        </a>
+        <a class="wall-label featured-label" href="#/${encodeURIComponent(featured.id)}">
+          <span class="note label-no">Featured work${featured.sample ? ' · <span class="sample">Sample</span>' : ""}</span>
+          <span class="label-title">${escapeHtml(featured.title)}</span>
+          <span class="label-meta">${metaLine(featured)}</span>
+          ${contentsLine(featured) ? `<span class="label-medium">${escapeHtml(contentsLine(featured))}</span>` : ""}
           <span class="note go">View work</span>
-        </a>` : ""}
-    </div>`;
+        </a>
+      </div>` : ""}`;
 
   // ---------- Gallery wall layout ----------
   // A repeating rhythm of rows. Each work's width depends on its orientation
@@ -112,17 +122,17 @@
         const sa = PAIR[orient(a.ratio)][row[0]];
         const sb = PAIR[orient(b.ratio)][row[1]];
         if (sa + sb <= 11) {
-          out.push({ ...a, start: 1, span: sa, drop: row[0] === "S" });
-          out.push({ ...b, start: 13 - sb, span: sb, drop: row[1] === "S", end: true });
+          out.push({ ...a, start: 1, span: sa });
+          out.push({ ...b, start: 13 - sb, span: sb, end: true });
           i += 2;
           continue;
         }
       }
       const size = row.length === 2 ? "L" : row[0];
       const span = SOLO[orient(a.ratio)][size];
-      // Large solos sit centred; medium solos lean right for an off-beat.
-      const start = size === "L" ? Math.floor((12 - span) / 2) + 1 : 12 - span;
-      out.push({ ...a, start, span, drop: false });
+      // A work hung on its own is centred on the wall.
+      const start = Math.floor((12 - span) / 2) + 1;
+      out.push({ ...a, start, span });
       i += 1;
     }
     return out;
@@ -131,21 +141,18 @@
   function plateHtml(p, n, mobileIndex) {
     const w = p.work;
     const o = orient(p.ratio);
-    const cls = ["plate", "reveal", p.end && "is-end", p.drop && "is-drop",
+    const cls = ["plate", "reveal", p.end && "is-end",
       o !== "land" && `m-${o}`, o !== "land" && mobileIndex % 2 && "m-right"].filter(Boolean).join(" ");
-    const extra = [contentsLine(w), tagsLine(w)].filter(Boolean).join(" — ");
+    const medium = contentsLine(w);
     return `
       <a class="${cls}" href="#/${encodeURIComponent(w.id)}" style="--start:${p.start};--span:${p.span}">
-        <img src="${escapeHtml(coverOf(w))}" alt="" loading="lazy" decoding="async">
-        <div class="plate-caption">
-          <p class="plate-meta note">
-            <span class="no">${String(n).padStart(2, "0")}</span>
-            <span>${escapeHtml(formatDate(w.date))}</span>
-            ${w.sample ? '<span class="sample">Sample</span>' : ""}
-          </p>
-          <h3 class="plate-title">${escapeHtml(w.title)}</h3>
-          ${extra ? `<p class="plate-extra">${extra}</p>` : ""}
-        </div>
+        <span class="hang"><span class="mount"><img src="${escapeHtml(coverOf(w))}" alt="" loading="lazy" decoding="async"></span></span>
+        <span class="wall-label">
+          <span class="note label-no">No. ${String(n).padStart(2, "0")}${w.sample ? ' · <span class="sample">Sample</span>' : ""}</span>
+          <span class="label-title">${escapeHtml(w.title)}</span>
+          <span class="label-meta">${metaLine(w)}</span>
+          ${medium || w.tags?.length ? `<span class="label-medium">${[escapeHtml(medium), tagsLine(w)].filter(Boolean).join(" — ")}</span>` : ""}
+        </span>
       </a>`;
   }
 
@@ -166,18 +173,25 @@
       groups.get(y).push(it);
     }
 
-    timeline.innerHTML = years.map((y) => {
+    timeline.innerHTML = years.map((y, r) => {
       const list = groups.get(y);
       let nonLand = 0;
       const plates = planChapter(list).map((p, n) =>
         plateHtml(p, n + 1, orient(p.ratio) === "land" ? 0 : nonLand++)).join("");
+      const tags = [...new Set(list.flatMap((it) => it.work.tags || []))];
       return `
-        <section class="chapter frame" id="y-${y}" aria-labelledby="y-${y}-h">
-          <header class="chapter-head reveal">
-            <h2 id="y-${y}-h">${y}</h2>
-            <span class="note">${list.length} ${list.length === 1 ? "work" : "works"}</span>
-          </header>
-          <div class="plates">${plates}</div>
+        <section class="room" id="y-${y}" aria-labelledby="y-${y}-h">
+          <div class="frame">
+            <header class="room-head reveal">
+              <p class="note room-no">Room ${String(r + 1).padStart(2, "0")}</p>
+              <h2 id="y-${y}-h">${y}</h2>
+              <p class="room-sub">
+                <span class="note">${list.length} ${list.length === 1 ? "work" : "works"}</span>
+                ${tags.length ? `<span class="room-tags">${tags.map(escapeHtml).join(" · ")}</span>` : ""}
+              </p>
+            </header>
+            <div class="plates">${plates}</div>
+          </div>
         </section>`;
     }).join("");
 

@@ -12,6 +12,11 @@
   --ink-faint: #7d7064;
   --hair: rgba(238, 229, 216, .12);
 
+  --wall-2: #1b1612;         /* every other room, a shade lighter */
+  --mat: #201a15;            /* mount around each work */
+  --frame-edge: #3b3029;     /* thin frame line */
+  --spot: rgba(255, 214, 160, .085);
+
   --red: #9b2f33;            /* dark red, used sparingly */
   --red-ink: #cf6a64;        /* readable red for small text on dark */
 
@@ -145,134 +150,187 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .year-index a:hover .year-index-y { color: var(--ink); }
 
-/* ---------- Opening ---------- */
+/* ---------- Entrance ---------- */
 
 .opening {
   position: relative;
-  padding-top: clamp(72px, 7vw, 96px);
-  background: radial-gradient(ellipse 70% 55% at 50% 30%, rgba(176, 110, 64, .10), transparent 70%);
+  padding-top: clamp(104px, 11vw, 150px);
+  background: radial-gradient(ellipse 70% 55% at 50% 45%, rgba(176, 110, 64, .09), transparent 70%);
 }
 
-.opening-media {
-  display: flex;
-  justify-content: center;
-  padding: 0 var(--gutter);
-}
-.opening-media a { display: block; }
-.opening-media img {
-  width: auto;
-  max-width: min(100%, 1180px);
-  max-height: max(300px, min(66svh, calc(100svh - 320px)));
-  min-height: 0;
-  transition: opacity .8s var(--ease);
-}
-.opening-media a:hover img { opacity: .92; }
-
-.opening-text {
+.entrance {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  gap: 32px clamp(24px, 6vw, 96px);
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
-  padding-top: clamp(22px, 3vw, 36px);
+  gap: 32px;
+  padding-bottom: clamp(26px, 3vw, 40px);
+  /* hairline under the content only, not the side gutters */
+  background: linear-gradient(var(--hair), var(--hair)) center bottom / calc(100% - 2 * var(--gutter)) 1px no-repeat;
 }
-
+.kicker { color: var(--red-ink); margin-bottom: 14px; }
 .site-title {
   font-family: var(--font-serif);
   font-weight: 300;
-  font-size: clamp(2.1rem, 4vw, 3.4rem);
-  line-height: .95;
-  letter-spacing: -.01em;
+  font-size: clamp(2.8rem, 6.4vw, 5.6rem);
+  line-height: .9;
+  letter-spacing: -.015em;
 }
 .tagline {
-  margin-top: 10px;
+  margin-top: 14px;
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  font-size: clamp(1.1rem, 1.5vw, 1.35rem);
   color: var(--ink-soft);
 }
-
-.opening-label {
-  justify-self: end;
-  display: grid;
-  gap: 6px;
-  max-width: 340px;
-  padding-bottom: 6px;
-}
-.opening-label .work-title {
+.entrance-facts { display: flex; gap: clamp(28px, 4vw, 56px); margin: 0 0 6px; }
+.entrance-facts div { display: grid; gap: 4px; }
+.entrance-facts dd {
+  margin: 0;
   font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-weight: 300;
+  font-size: clamp(1.8rem, 2.6vw, 2.4rem);
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+}
+
+/* Featured work hung centre stage, its label to the side */
+.featured {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+  align-items: end;
+  gap: clamp(24px, 4vw, 56px);
+  padding-top: clamp(56px, 6vw, 88px);
+}
+.featured-hang { justify-self: center; }
+.featured-hang img { max-height: max(300px, min(58svh, calc(100svh - 440px))); }
+
+/* ---------- Hanging a work: spotlight, frame, mount ---------- */
+
+.hang {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  isolation: isolate;
+}
+/* A warm pool of light on the wall, cast from above */
+.hang::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -25%;
+  right: -25%;
+  top: -38%;
+  height: 120%;
+  background: radial-gradient(closest-side, var(--spot), transparent);
+  pointer-events: none;
+  transition: opacity .8s var(--ease);
+  opacity: .8;
+}
+.mount {
+  display: block;
+  padding: clamp(8px, 1.1vw, 16px);
+  background: var(--mat);
+  border: 1px solid var(--frame-edge);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, .35),
+    0 1px 0 rgba(255, 255, 255, .03),
+    0 34px 60px -18px rgba(0, 0, 0, .75),
+    0 10px 18px -8px rgba(0, 0, 0, .5);
+  transition: transform .8s var(--ease), box-shadow .8s var(--ease);
+}
+.mount img {
+  width: auto;
+  max-width: 100%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .5);
+  opacity: .94;
+  transition: opacity .6s var(--ease);
+}
+a:hover > .hang::before, a.hang:hover::before { opacity: 1.4; }
+a:hover > .hang .mount, a.hang:hover .mount { transform: translateY(-3px); }
+a:hover > .hang img, a.hang:hover img { opacity: 1; }
+
+/* ---------- Wall label (museum placard) ---------- */
+
+.wall-label {
+  display: grid;
+  gap: 4px;
+  padding-left: 14px;
+  border-left: 1px solid var(--hair);
+}
+.label-no { color: var(--ink-soft); }
+.label-no .sample, .kicker .sample { color: var(--red-ink); }
+.label-title {
+  margin-top: 4px;
+  font-family: var(--font-serif);
+  font-size: clamp(1.15rem, 1.3vw, 1.32rem);
   font-weight: 400;
   line-height: 1.15;
   transition: color .3s;
 }
-.opening-label:hover .work-title { color: var(--red-ink); }
-.opening-label .go { margin-top: 6px; color: var(--ink-soft); }
-.opening-label .go::after { content: " →"; letter-spacing: 0; }
+.label-meta { font-size: .82rem; color: var(--ink-soft); }
+.label-medium { font-family: var(--font-serif); font-style: italic; font-size: .98rem; color: var(--ink-faint); }
+.label-meta:empty { display: none; }
+a:hover .label-title, .wall-label:hover .label-title { color: var(--red-ink); }
+.featured-label .go { margin-top: 10px; color: var(--ink-soft); }
+.featured-label .go::after { content: " →"; letter-spacing: 0; }
 
-/* ---------- Timeline: one chapter per year ---------- */
+/* ---------- Rooms: one per year ---------- */
 
-.timeline { padding-top: clamp(72px, 9vw, 128px); }
+.timeline { padding-top: clamp(88px, 10vw, 140px); }
 
-.chapter + .chapter { margin-top: clamp(96px, 12vw, 176px); }
-
-.chapter-head {
-  display: flex;
-  align-items: baseline;
-  gap: clamp(12px, 1.6vw, 22px);
-  margin-bottom: clamp(28px, 3.5vw, 48px);
+.room { padding: clamp(72px, 8vw, 120px) 0 clamp(88px, 10vw, 140px); }
+.room:nth-child(even) {
+  background: var(--wall-2);
+  box-shadow: inset 0 1px 0 var(--hair), inset 0 -1px 0 var(--hair);
 }
-.chapter-head h2 {
+
+.room-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "no no" "year sub";
+  align-items: end;
+  column-gap: clamp(18px, 2.4vw, 36px);
+  row-gap: 10px;
+  padding-bottom: 22px;
+  margin-bottom: clamp(56px, 6vw, 88px);
+  border-bottom: 1px solid var(--hair);
+}
+.room-no { grid-area: no; color: var(--red-ink); }
+.room-head h2 {
+  grid-area: year;
   font-family: var(--font-serif);
   font-weight: 300;
-  font-size: clamp(2.1rem, 3.6vw, 3.25rem);
-  line-height: .9;
-  letter-spacing: -.01em;
+  font-size: clamp(3rem, 5.6vw, 4.8rem);
+  line-height: .85;
+  letter-spacing: -.015em;
   font-variant-numeric: lining-nums;
 }
+.room-sub { grid-area: sub; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; padding-bottom: 6px; }
+.room-tags { font-family: var(--font-serif); font-style: italic; color: var(--ink-faint); }
 
-/* Staggered gallery wall. Column start/span come from script.js,
+/* Works hung at a shared eye line. Column start/span come from script.js,
    chosen by each work's orientation and a repeating rhythm. */
 .plates {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--col-gap);
-  row-gap: clamp(52px, 6.5vw, 96px);
-  align-items: start;
+  row-gap: clamp(72px, 8vw, 120px);
+  align-items: center;
 }
 
 .plate {
   grid-column: var(--start) / span var(--span);
+  display: grid;
+  gap: 22px;
   width: fit-content;
   max-width: 100%;
 }
 .plate.is-end { justify-self: end; }
-.plate.is-drop { margin-top: clamp(36px, 8vw, 128px); }
-
-.plate img {
-  width: auto;
-  max-width: 100%;
-  max-height: 72vh;
-  opacity: .94;
-  transition: opacity .6s var(--ease);
-}
-.plate:hover img { opacity: 1; }
-
-/* Caption never widens the plate beyond its image */
-.plate-caption { width: 0; min-width: 100%; padding-top: 12px; }
-.plate-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; }
-.plate-meta .no { color: var(--ink-soft); }
-.plate-meta .sample { color: var(--red-ink); }
-.plate-title {
-  margin-top: 6px;
-  font-family: var(--font-serif);
-  font-size: clamp(1.15rem, 1.3vw, 1.3rem);
-  font-weight: 400;
-  line-height: 1.15;
-  transition: color .3s;
-}
-.plate:hover .plate-title { color: var(--red-ink); }
-.plate-extra { margin-top: 6px; font-size: .82rem; color: var(--ink-faint); }
+.plate .mount img { max-height: 64vh; }
+/* Label never widens the plate beyond its frame */
+.plate .wall-label { width: 0; min-width: calc(100% - 15px); }
 
 .empty { color: var(--ink-soft); font-style: italic; }
 
@@ -469,21 +527,20 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* ---------- Responsive ---------- */
 
 @media (max-width: 760px) {
-  .opening-text { grid-template-columns: 1fr; }
-  .opening-label { justify-self: start; }
-  .opening-media { padding: 0; }
-  .opening-media img { max-height: 64svh; }
+  .entrance { grid-template-columns: 1fr; }
+  .featured { grid-template-columns: 1fr; }
+  .featured-hang img { max-height: 60svh; }
 
   /* Phones: one work per row, alternating widths and sides for rhythm */
   .plates { display: flex; flex-direction: column; row-gap: 56px; }
   .plate, .plate.is-end { width: auto; max-width: none; align-self: flex-start; }
-  .plate.is-drop { margin-top: 0; }
   .plate.m-port { width: 72%; }
   .plate.m-sq { width: 82%; }
   .plate.m-right { align-self: flex-end; }
-  .plate img { width: 100%; max-height: none; opacity: 1; }
+  .hang { width: 100%; }
+  .plate .mount img, .featured-hang img { width: 100%; max-height: none; opacity: 1; }
 
-  .chapter-head { margin-bottom: 28px; }
+  .room-head { margin-bottom: 40px; }
 
   .viewer-frame { padding: 56px 0 12px; }
   .viewer-bar { flex-direction: column; align-items: stretch; gap: 14px; max-height: 36dvh; padding-top: 14px; }
@@ -497,7 +554,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 
 @media (hover: none) {
-  .plate img { opacity: 1; }
+  .mount img { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
