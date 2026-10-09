@@ -5,17 +5,17 @@
    ========================================================================== */
 
 :root {
-  --bg: #15110e;             /* warm chocolate black */
-  --bg-raise: #1c1713;
+  --bg: #231c17;             /* warm chocolate black */
+  --bg-raise: #2b231d;
   --ink: #eee5d8;            /* ivory */
   --ink-soft: #b4a696;
   --ink-faint: #9b8d7e;
   --hair: rgba(238, 229, 216, .12);
 
-  --wall-2: #1b1612;         /* every other room, a shade lighter */
-  --mat: #201a15;            /* mount around each work */
-  --frame-edge: #3b3029;     /* thin frame line */
-  --spot: rgba(255, 214, 160, .085);
+  --wall-2: #2a221c;         /* every other room, a shade lighter */
+  --mat: #30271f;            /* mount around each work */
+  --frame-edge: #4c3f35;     /* thin frame line */
+  --spot: rgba(255, 214, 160, .11);
 
   --red: #9b2f33;            /* dark red, used sparingly */
   --red-ink: #cf6a64;        /* readable red for small text on dark */
@@ -81,7 +81,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   transition: background .5s var(--ease);
 }
 .masthead.is-solid {
-  background: rgba(21, 17, 14, .82);
+  background: rgba(35, 28, 23, .82);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -128,7 +128,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
   gap: 6px 20px;
   padding: 22px 24px 24px;
-  background: rgba(21, 17, 14, .97);
+  background: rgba(35, 28, 23, .97);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   animation: fade-in .3s var(--ease);
@@ -155,7 +155,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .opening {
   position: relative;
   padding-top: clamp(104px, 11vw, 150px);
-  background: radial-gradient(ellipse 70% 55% at 50% 45%, rgba(176, 110, 64, .09), transparent 70%);
+  background: radial-gradient(ellipse 70% 55% at 50% 45%, rgba(176, 110, 64, .12), transparent 70%);
 }
 
 .entrance {
