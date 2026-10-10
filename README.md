@@ -1,5 +1,7 @@
 # JH Gallery
 
+![JH Gallery home page: the collection title and the featured work, framed on a warm dark wall](docs/screenshot.jpg)
+
 A personal gallery: life in motion, moments in light. Works are arranged by **when they were filmed or photographed**, grouped by year with the newest first.
 
 A static site built with plain HTML, CSS and vanilla JavaScript. It has no frameworks, build step or dependencies (Google Fonts is optional and falls back to Georgia when offline).
@@ -81,7 +83,8 @@ The order in the file doesn't matter, because the site sorts by `date`. Records 
 
 ## Status
 
-🚧 Work in progress — the layout and viewer are done, shown with placeholder samples for now.
+🚀 Deploying — the layout, viewer and the archive-to-web pipeline are done, and the real collection is built locally.
 
 - **Now:** public browsing only. Real works are built locally from the archive; the repo only holds samples. There is no upload UI, login, comments or likes.
-- **Next:** decide where photos and videos are hosted, then deploy.
+- **In progress:** hosting at `gallery.jessamyh.com` on AWS (private S3 + CloudFront, certificate from ACM), with DNS on Cloudflare, defined in Terraform.
+- **Next:** a private room for family and friends behind sign-in.
