@@ -207,6 +207,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* ---------- Hanging a work: spotlight, frame, mount ---------- */
 
+/* The spotlight reaches 25% past each frame. On phones the frames fill the
+   width, so without this the glow widens the page and pushes the fixed
+   header's year links off-screen. `clip` (not `hidden`) adds no scroll box. */
+.opening, .timeline { overflow-x: clip; }
+
 .hang {
   position: relative;
   display: block;
@@ -575,4 +580,8 @@ a:hover .label-title, .wall-label:hover .label-title { color: var(--red-ink); }
   .year-links a:nth-child(n + 3) { display: none; }
   .year-nav.has-index .year-toggle { display: inline-flex; align-items: center; gap: 8px; }
   .year-index { grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+  /* "All years" → "All", and tighter gaps, so it fits beside two years */
+  .year-toggle-more { display: none; }
+  .year-nav, .year-links { gap: 14px; }
+  .year-toggle::before { margin-right: 2px; }
 }

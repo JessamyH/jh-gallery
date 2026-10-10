@@ -221,7 +221,7 @@
       <div class="year-links">
         ${years.slice(0, RECENT_YEARS).map((y) => `<a class="note" href="#y-${y}">${y}</a>`).join("")}
       </div>
-      <button class="year-toggle note" type="button" aria-expanded="false" aria-controls="year-index">All years</button>
+      <button class="year-toggle note" type="button" aria-label="All years" aria-expanded="false" aria-controls="year-index">All<span class="year-toggle-more"> years</span></button>
       <div class="year-index" id="year-index" hidden>
         ${years.map((y) => `
           <a href="#y-${y}">
