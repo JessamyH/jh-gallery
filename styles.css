@@ -272,6 +272,7 @@ a:hover > .hang img, a.hang:hover img { opacity: 1; }
 .label-meta { font-size: .82rem; color: var(--ink-soft); }
 .label-medium { font-family: var(--font-serif); font-style: italic; font-size: .98rem; color: var(--ink-faint); }
 .label-meta:empty { display: none; }
+.label-original { font-family: var(--font-serif); font-style: italic; font-size: 1rem; color: var(--ink-soft); }
 a:hover .label-title, .wall-label:hover .label-title { color: var(--red-ink); }
 .featured-label .go { margin-top: 10px; color: var(--ink-soft); }
 .featured-label .go::after { content: " →"; letter-spacing: 0; }
@@ -483,6 +484,8 @@ a:hover .label-title, .wall-label:hover .label-title { color: var(--red-ink); }
 }
 .viewer-desc { margin-top: 10px; color: var(--ink-soft); font-size: .9rem; }
 .viewer-desc:empty { display: none; }
+.viewer-original { margin-top: 4px; font-family: var(--font-serif); font-style: italic; color: var(--ink-soft); }
+.viewer-original:empty { display: none; }
 
 .viewer-side { display: grid; justify-items: end; gap: 12px; flex: none; }
 .viewer-count { color: var(--ink-faint); }
