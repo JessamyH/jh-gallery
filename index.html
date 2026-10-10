@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@400;500&display=swap">
-  <link rel="stylesheet" href="styles.css?v=15">
+  <link rel="stylesheet" href="styles.css?v=18">
 </head>
 <body>
 
@@ -52,6 +52,7 @@
       <div class="viewer-caption">
         <p class="viewer-meta" id="viewer-meta"></p>
         <h2 class="viewer-title" id="viewer-title"></h2>
+        <p class="viewer-original" id="viewer-original"></p>
         <p class="viewer-desc" id="viewer-desc"></p>
       </div>
       <div class="viewer-side">
@@ -65,7 +66,9 @@
     </button>
   </dialog>
 
-  <script src="data/works.js?v=14"></script>
-  <script src="script.js?v=14"></script>
+  <script src="data/works.js?v=19"></script>
+  <!-- Real works, generated locally by tools/build.py and git-ignored; overrides the samples when present -->
+  <script>document.write('<script src="data/works.local.js?t=' + Date.now() + '" onerror="this.remove()"><\/script>');</script>
+  <script src="script.js?v=22"></script>
 </body>
 </html>
