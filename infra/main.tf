@@ -84,9 +84,37 @@ resource "aws_cloudfront_cache_policy" "versioned" {
   }
 }
 
-# AWS-managed: HSTS, X-Content-Type-Options: nosniff, frame and referrer headers.
-data "aws_cloudfront_response_headers_policy" "security" {
-  name = "Managed-SecurityHeadersPolicy"
+# Same security headers as AWS's Managed-SecurityHeadersPolicy, plus X-Robots-Tag
+# so search engines skip every file (images and videos too), not just the page.
+# Shared by direct link only; there's no robots.txt block, so crawlers can see the noindex.
+resource "aws_cloudfront_response_headers_policy" "site" {
+  name = "jh-gallery-headers"
+
+  security_headers_config {
+    strict_transport_security {
+      access_control_max_age_sec = 31536000
+      override                   = true
+    }
+    content_type_options {
+      override = true
+    }
+    frame_options {
+      frame_option = "SAMEORIGIN"
+      override     = true
+    }
+    referrer_policy {
+      referrer_policy = "strict-origin-when-cross-origin"
+      override        = true
+    }
+  }
+
+  custom_headers_config {
+    items {
+      header   = "X-Robots-Tag"
+      value    = "noindex, nofollow, noimageindex"
+      override = true
+    }
+  }
 }
 
 resource "aws_cloudfront_distribution" "site" {
@@ -110,7 +138,7 @@ resource "aws_cloudfront_distribution" "site" {
     cached_methods             = ["GET", "HEAD"]
     compress                   = true
     cache_policy_id            = aws_cloudfront_cache_policy.versioned.id
-    response_headers_policy_id = data.aws_cloudfront_response_headers_policy.security.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.site.id
   }
 
   restrictions {
