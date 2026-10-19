@@ -10,6 +10,8 @@ and writes web-ready copies to media/archive/<id>/:
     photos   → long edge 2500px JPEG, EXIF/GPS stripped        01.jpg, 02.jpg …
     videos   → 1080p H.264 + AAC, faststart, metadata stripped  <name>.mp4 + <name>.jpg poster
     audio    → square still-image MP4 over its cover            <name>.mp4 + <name>.jpg poster
+    smaller  → 1200px-wide copy of each photo and poster        01-1200.jpg, <name>-1200.jpg
+               (srcset step for the wall and viewer thumbnails)
                (no cover → a text cover in the site's style)
 
 An image with the same name as a video/audio file is its cover, not a photo.
@@ -53,6 +55,7 @@ VIDEO_EDGE = 1920          # long edge → 1080p for 16:9, 1080×1920 for vertic
 VIDEO_CRF = "23"
 VIDEO_MAXRATE = "6M"       # caps very busy footage
 AUDIO_COVER = 1080
+THUMB_WIDTH = 1200         # sharp on a 3x phone at full width; script.js's srcset assumes it
 
 VIDEO_EXT = {".mp4", ".mov", ".m4v", ".avi", ".mkv"}
 AUDIO_EXT = {".m4a", ".wav", ".mp3", ".flac", ".aac"}
@@ -152,6 +155,20 @@ def save_image(src, dst, edge):
             im = im.convert("RGB")
         im.thumbnail((edge, edge), Image.LANCZOS)
         im.save(dst, "JPEG", quality=85, optimize=True, progressive=True)
+
+
+def thumb_for(full, mf):
+    """Smaller copy of a web photo or poster, for srcset. Made from the web copy,
+    so it carries no metadata either."""
+    dst = full.with_name(f"{full.stem}-{THUMB_WIDTH}.jpg")
+    key = sig(full)
+    if not mf.fresh(dst, key, full):
+        with Image.open(full) as im:
+            if im.width > THUMB_WIDTH:
+                im = im.resize((THUMB_WIDTH, round(im.height * THUMB_WIDTH / im.width)), Image.LANCZOS)
+            im.save(dst, "JPEG", quality=82, optimize=True, progressive=True)
+    mf.keep(dst, key)
+    return dst
 
 
 def crop_filter(aspect):
@@ -285,7 +302,7 @@ def build_work(folder, date, wid, meta):
                 print(f"  photo  {p.name} → {dst.name}")
                 save_image(p, dst, PHOTO_EDGE)
             mf.keep(dst, key)
-            media.append({"type": "image", "src": dst})
+            media.append({"type": "image", "src": dst, "thumb": thumb_for(dst, mf)})
         elif ext in VIDEO_EXT | AUDIO_EXT:
             name = slug(p.stem)
             mp4, poster = out / f"{name}.mp4", out / f"{name}.jpg"
@@ -323,7 +340,7 @@ def build_work(folder, date, wid, meta):
                         grab_poster(mp4, poster)
             mf.keep(mp4, key)
             mf.keep(poster, pkey)
-            media.append({"type": "video", "src": mp4, "poster": poster})
+            media.append({"type": "video", "src": mp4, "poster": poster, "thumb": thumb_for(poster, mf)})
     mf.save()
     return media
 
