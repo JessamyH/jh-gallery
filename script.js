@@ -32,7 +32,16 @@
   const coverOf = (w) =>
     w.cover || (w.media || []).map((m) => (m.type === "video" ? m.poster : m.src)).find(Boolean) || "";
 
-  const thumbOf = (m) => (m.type === "video" ? m.poster : m.src);
+  // Smaller copy from tools/build.py (1200px wide) when there is one.
+  const thumbOf = (m) => m.thumb || (m.type === "video" ? m.poster : m.src);
+  const coverThumbOf = (w) => (!w.cover && (w.media || []).find((m) => m.type === "video" ? m.poster : m.src)?.thumb) || coverOf(w);
+
+  // Cover <img>: the browser picks the 1200px copy or the full one for the space it has.
+  function coverImg(w, sizes, attrs) {
+    const full = coverOf(w), small = coverThumbOf(w);
+    const srcset = small !== full ? ` srcset="${escapeHtml(small)} 1200w, ${escapeHtml(full)} 2500w" sizes="${sizes}"` : "";
+    return `<img src="${escapeHtml(full)}"${srcset} alt="" ${attrs}>`;
+  }
 
   const escapeHtml = (s) =>
     String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -94,7 +103,7 @@
     ${featured ? `
       <div class="frame featured">
         <a class="hang featured-hang" href="#/${encodeURIComponent(featured.id)}" aria-label="Open ${escapeHtml(featured.title)}">
-          <span class="mount"><img src="${escapeHtml(coverOf(featured))}" alt="" fetchpriority="high"></span>
+          <span class="mount">${coverImg(featured, "(max-width: 760px) 100vw, 70vw", 'fetchpriority="high"')}</span>
         </a>
         <a class="wall-label featured-label" href="#/${encodeURIComponent(featured.id)}">
           <span class="note label-no">Featured work${featured.sample ? ' · <span class="sample">Sample</span>' : ""}</span>
@@ -149,7 +158,7 @@
     const medium = contentsLine(w);
     return `
       <a class="${cls}" href="#/${encodeURIComponent(w.id)}" style="--start:${p.start};--span:${p.span}">
-        <span class="hang"><span class="mount"><img src="${escapeHtml(coverOf(w))}" alt="" loading="lazy" decoding="async"></span></span>
+        <span class="hang"><span class="mount">${coverImg(w, "(max-width: 760px) 100vw, 50vw", 'loading="lazy" decoding="async"')}</span></span>
         <span class="wall-label">
           <span class="note label-no">No. ${String(n).padStart(2, "0")}${w.sample ? ' · <span class="sample">Sample</span>' : ""}</span>
           <span class="label-title">${escapeHtml(w.title)}</span>
@@ -166,7 +175,7 @@
       timeline.innerHTML = '<p class="frame empty">No works yet — add some in data/works.js.</p>';
       return;
     }
-    const ratios = await Promise.all(works.map((w) => loadRatio(coverOf(w))));
+    const ratios = await Promise.all(works.map((w) => loadRatio(coverThumbOf(w))));
     const items = works.map((work, i) => ({ work, ratio: ratios[i] }));
 
     const years = [];
