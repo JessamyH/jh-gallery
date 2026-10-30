@@ -19,5 +19,13 @@ provider "aws" {
   }
 }
 
-# Phase 2 (custom domain) adds a us-east-1 provider for the ACM certificate
-# and the Cloudflare provider for DNS. Phase 1 serves on the *.cloudfront.net address.
+# CloudFront only accepts ACM certificates from us-east-1.
+provider "aws" {
+  alias   = "us_east_1"
+  region  = "us-east-1"
+  profile = var.aws_profile
+
+  default_tags {
+    tags = { Project = "jh-gallery" }
+  }
+}

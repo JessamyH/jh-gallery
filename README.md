@@ -6,7 +6,7 @@ A personal gallery of photos and films, hung like a museum: each year is a room,
 
 Plain HTML, CSS and JavaScript, with no framework or build step. Hosted on AWS (private S3 behind CloudFront), defined in Terraform.
 
-**[Live Demo](https://d38r8jxykoc83n.cloudfront.net)**
+**[Live Demo](https://gallery.jessamyh.com)**
 
 ## How it works
 
@@ -16,7 +16,7 @@ Local archive ──tools/build.py──▶ web media + works.local.js ──too
 
 - **Build:** `tools/build.py` turns the original archive into web copies. It resizes photos, makes 1200px copies for smaller screens, compresses video to 1080p, and strips EXIF/GPS metadata.
 - **Deploy:** `tools/deploy.sh` uploads only the media the gallery refers to, sets cache headers and refreshes CloudFront.
-- **Host:** S3 is private and only CloudFront can read it (Origin Access Control). CloudFront serves the site over HTTPS with security headers and `noindex`, so it's shared by link and kept out of search engines.
+- **Host:** S3 is private and only CloudFront can read it (Origin Access Control). CloudFront serves the site over HTTPS on `gallery.jessamyh.com` (ACM certificate, DNS on Cloudflare) with security headers and `noindex`, so it's shared by link and kept out of search engines.
 
 ## Privacy
 

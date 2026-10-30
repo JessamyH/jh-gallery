@@ -48,6 +48,25 @@ resource "aws_s3_bucket_policy" "site" {
   depends_on = [aws_s3_bucket_public_access_block.site]
 }
 
+# --- Certificate for the custom domain ------------------------------------
+
+# Validated by a CNAME added by hand in Cloudflare (see the acm_validation_records output).
+resource "aws_acm_certificate" "gallery" {
+  provider          = aws.us_east_1
+  domain_name       = var.domain_name
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Makes apply wait until the certificate is ISSUED before CloudFront uses it.
+resource "aws_acm_certificate_validation" "gallery" {
+  provider        = aws.us_east_1
+  certificate_arn = aws_acm_certificate.gallery.arn
+}
+
 # --- CloudFront --------------------------------------------------------------
 
 resource "aws_cloudfront_origin_access_control" "site" {
@@ -124,6 +143,7 @@ resource "aws_cloudfront_distribution" "site" {
   http_version        = "http2and3"
   is_ipv6_enabled     = true
   price_class         = "PriceClass_All" # the cheaper classes leave out Australian edge locations
+  aliases             = [var.domain_name]
 
   origin {
     origin_id                = "s3-site"
@@ -147,8 +167,9 @@ resource "aws_cloudfront_distribution" "site" {
     }
   }
 
-  # V1 uses the default *.cloudfront.net certificate; the custom domain comes later.
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate_validation.gallery.certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 }

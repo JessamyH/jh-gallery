@@ -15,3 +15,9 @@ variable "bucket_name" {
   type        = string
   default     = null
 }
+
+variable "domain_name" {
+  description = "Custom domain for the gallery (DNS is on Cloudflare)."
+  type        = string
+  default     = "gallery.jessamyh.com"
+}

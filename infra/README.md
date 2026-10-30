@@ -1,8 +1,14 @@
 # Infrastructure
 
-V1 hosting for JH Gallery: a private S3 bucket served only through CloudFront
-(Origin Access Control), on the default `*.cloudfront.net` HTTPS address.
-The custom domain (ACM + Cloudflare DNS) is a later phase.
+Hosting for JH Gallery: a private S3 bucket served only through CloudFront
+(Origin Access Control), at https://gallery.jessamyh.com.
+
+The custom domain uses an ACM certificate in us-east-1 (CloudFront requires it).
+DNS is on Cloudflare and managed by hand, as two CNAMEs set to DNS only (not proxied):
+
+- `gallery` → the `cloudfront_domain_name` output
+- the ACM validation record from the `acm_validation_records` output. Keep it, or the
+  certificate can't renew automatically.
 
 ## Usage
 
