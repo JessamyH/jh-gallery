@@ -34,7 +34,7 @@ media/samples/        sample media
 media/archive/        real media, generated (git-ignored)
 tools/build.py        archive → web media
 tools/deploy.sh       web media → S3 + CloudFront
-infra/                Terraform: S3, CloudFront, OAC, policies
+infra/                Terraform: S3, CloudFront, OAC, ACM, policies
 ```
 
 ## Usage

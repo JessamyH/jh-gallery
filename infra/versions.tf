@@ -9,7 +9,7 @@ terraform {
   }
 }
 
-# Bucket and everything else live in Sydney.
+# Bucket lives in var.aws_region (Sydney by default).
 provider "aws" {
   region  = var.aws_region
   profile = var.aws_profile
