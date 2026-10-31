@@ -10,17 +10,19 @@ and writes web-ready copies to media/archive/<id>/:
     photos   → long edge 2500px JPEG, EXIF/GPS stripped        01.jpg, 02.jpg …
     videos   → 1080p H.264 + AAC, faststart, metadata stripped  <name>.mp4 + <name>.jpg poster
     audio    → square still-image MP4 over its cover            <name>.mp4 + <name>.jpg poster
+               (no cover → a text cover in the site's style)
     smaller  → 1200px-wide copy of each photo and poster        01-1200.jpg, <name>-1200.jpg
                (srcset step for the wall and viewer thumbnails)
-               (no cover → a text cover in the site's style)
 
 An image with the same name as a video/audio file is its cover, not a photo.
 Files are taken in filename order. Work already done is skipped, so re-running
 only converts what is new or changed.
 
 Titles, tags, location and description live in meta.json next to the archive
-(F:\\JH-Archive\\meta.json, keyed by id); "video_aspect": "2:3" there crops a
-video (keeps the bottom, trims the top). New folders get a stub to fill in.
+(F:\\JH-Archive\\meta.json, keyed by id). Optional keys there: "original" (the
+song a cover is of), "featured": true, "subtitle" (extra line on a generated
+audio cover), and "video_aspect": "2:3", which crops a video (keeps the bottom,
+trims the top). New folders get a stub to fill in.
 
 With --data, data/works.local.js is written from the archive + meta.json.
 It is git-ignored, like media/archive/, so personal content never reaches the
@@ -373,9 +375,9 @@ def write_works_js(works):
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")   # Windows consoles default to cp1252
-    ap =argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--src", type=Path, default=DEFAULT_SRC)
-    ap.add_argument("--only", help="only folders whose id contains this text (repeatable, comma-separated)")
+    ap.add_argument("--only", help="only folders whose id contains this text (several: comma-separated)")
     ap.add_argument("--data", action="store_true", help="write data/works.local.js")
     args = ap.parse_args()
 
